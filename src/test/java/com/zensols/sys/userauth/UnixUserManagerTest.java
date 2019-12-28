@@ -26,7 +26,7 @@ public class UnixUserManagerTest {
     }
 
     @Test
-    public void testUnixUserManager() throws Exception {
+    public void testStatus() throws Exception {
 	if (log.isDebugEnabled()) {
 	    log.debug("testing hello world");
 	}
@@ -39,5 +39,37 @@ public class UnixUserManagerTest {
 
 	UserAuthStatus status = usr.getStatusForPassword("wrongpasswd");
 	Assert.assertEquals(UserAuthStatus.INVALID, status);
+
+	status = usr.getStatusForPassword("pass123");
+	Assert.assertEquals(UserAuthStatus.OK, status);
+
+	usr = mng.createUser("nosuchuser");
+	status = usr.getStatusForPassword("pass123");
+	Assert.assertEquals(UserAuthStatus.UNKNOWN, status);
+    }
+
+    @Test
+    public void testAuth() throws Exception {
+	if (log.isDebugEnabled()) {
+	    log.debug("testing hello world");
+	}
+	
+	UnixUserManager mng = new UnixUserManager("src/test/python/pwauth.py");
+	UnixUser usr = mng.createUser("bob");
+	if (log.isDebugEnabled()) {
+	    log.debug("user: " + usr);
+	}
+
+	UserAuthStatus status = usr.getStatusForPassword("wrongpasswd");
+	Assert.assertFalse(usr.isAuthorized("wrongpasswd"));
+
+	Assert.assertTrue(usr.isAuthorized("pass123"));
+
+	usr = mng.createUser("jane");
+	Assert.assertFalse(usr.isAuthorized("pass123"));
+	Assert.assertTrue(usr.isAuthorized("changeit"));
+
+	usr = mng.createUser("goofy");
+	Assert.assertFalse(usr.isAuthorized("pass123"));
     }
 }

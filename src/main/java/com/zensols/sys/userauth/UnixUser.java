@@ -1,7 +1,9 @@
 package com.zensols.sys.userauth;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,19 +19,59 @@ public class UnixUser {
 	this.userName = userName;
     }
 
-    public UserAuthStatus getStatusForPassword(String password) {
+    protected UserAuthStatus doPwauth(String password, String pwauthPath) throws IOException {
+	ProcessBuilder pb = new ProcessBuilder(pwauthPath);
+	Process proc = pb.start();
+	PrintWriter stdin = new PrintWriter(proc.getOutputStream());
+	BufferedReader stdout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+	BufferedReader stderr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+	String line = null;
+	int returnCode = -1;
+
+	stdin.println(this.userName);
+	stdin.println(password);
+	stdin.flush();
+
+	while ((line = stdout.readLine()) != null) {
+	    if (log.isInfoEnabled()) {
+		log.info(String.format("out: %s", line));
+	    }
+	}
+	while ((line = stderr.readLine()) != null) {
+	    if (log.isInfoEnabled()) {
+		log.info(String.format("error: %s", line));
+	    }
+	}
+
+	if (log.isDebugEnabled()) {
+	    log.debug("waiting for process to finish");
+	}
+	try {
+	    proc.waitFor();
+	} catch (InterruptedException e) {
+	    throw new RuntimeException("interrupted", e);
+	}
+
+	returnCode = proc.exitValue();
+	if (log.isDebugEnabled()) {
+	    log.debug(String.format("return code: %d", returnCode));
+	}
+
+	return UserAuthStatus.getByCode(returnCode);
+    }
+
+    public UserAuthStatus getStatusForPassword(String password) throws IOException {
 	String path = this.owner.getPwauthPath();
 
 	if (log.isDebugEnabled()) {
 	    log.debug(String.format("executing pwauth at %s", path));
 	}
 	
-	//ProcessBuilder pbld = ProcessBuilder();
-	// Process p = Runtime.process();
-	// InputStream stdout = p.getInputStream();
-	// InputStream stderr = p.getErrorStream();
-	// OutputStream stdin = p.getOutputStream();
-	return UserAuthStatus.INVALID;
+	return this.doPwauth(password, path);
+    }
+
+    public boolean isAuthorized(String password) throws IOException {
+	return this.getStatusForPassword(password) == UserAuthStatus.OK;
     }
 
     public String toString() {
