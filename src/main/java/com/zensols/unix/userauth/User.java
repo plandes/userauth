@@ -19,8 +19,13 @@ import org.slf4j.LoggerFactory;
 public class User {
     private static final Logger log = LoggerFactory.getLogger(User.class);
 
+    public static final int DEFAULT_USER_ID_FIELD = 2;
+    public static final int DEFAULT_GROUP_ID_FIELD = 3;
+    public static final int DEFAULT_FULL_NAME_FIELD = 4;
+
     private UserManager owner;
     private String userName;
+    private String[] getentFields;
 
     /**
      * @param owner manager that created it
@@ -37,33 +42,52 @@ public class User {
      * @param password the password to check with the system
      * @param pwauthPath the path to the <code>pwauth</code> command
      * @return the status of the command
-     * @throws IOException when executing the binary fails
+     * @throws SystemException when executing the binary fails
      */
-    protected UserAuthStatus doPwauth(String password, String pwauthPath) throws IOException {
+    public UserAuthStatus getStatusForPassword(String password) throws SystemException {
 	Command cmd = owner.getCommand("pwauth");
 	List<String> stdin = new java.util.LinkedList();
 	CommandOutput output = null;
 
 	stdin.add(this.userName);
 	stdin.add(password);
-
 	output = cmd.execute(null, null, stdin);
 
 	return UserAuthStatus.getByCode(output.returnCode);
     }
 
-    public UserAuthStatus getStatusForPassword(String password) throws IOException {
-	String path = this.owner.getPath("pwauth");
-
-	if (log.isDebugEnabled()) {
-	    log.debug(String.format("executing pwauth at %s", path));
-	}
-	
-	return this.doPwauth(password, path);
+    public boolean isAuthorized(String password) throws SystemException {
+	return this.getStatusForPassword(password) == UserAuthStatus.OK;
     }
 
-    public boolean isAuthorized(String password) throws IOException {
-	return this.getStatusForPassword(password) == UserAuthStatus.OK;
+    private String[] getGetentFields() throws SystemException {
+	if (this.getentFields == null) {
+	    CommandOutput output = owner.getCommand("getent").execute(0, "passwd " + this.userName, null);
+	    String[] fields = null;
+
+	    if (output.stdout.size() != 1) {
+		throw new SystemException(String.format("expected single line output but got: <%s>", output.stdout));
+	    }
+	    this.getentFields = output.stdout.get(0).split(":");
+	}
+	return this.getentFields;
+    }
+
+    public int getUserId() throws SystemException {
+	String[] fields = getGetentFields();
+	String idStr = fields[DEFAULT_USER_ID_FIELD];
+	return Integer.parseInt(idStr);
+    }
+
+    public int getGroupId() throws SystemException {
+	String[] fields = getGetentFields();
+	String idStr = fields[DEFAULT_GROUP_ID_FIELD];
+	return Integer.parseInt(idStr);
+    }
+
+    public String getFullName() throws SystemException {
+	String[] fields = getGetentFields();
+	return fields[DEFAULT_FULL_NAME_FIELD];
     }
 
     public String toString() {

@@ -15,6 +15,7 @@ public class UserManagerTest {
     public UserManagerTest() {
 	this.mng = new UserManager();
 	this.mng.overridePath("pwauth", "src/test/python/pwauth.py");
+	this.mng.overridePath("getent", "src/test/python/getent.py");
     }
 
     @Test
@@ -28,10 +29,6 @@ public class UserManagerTest {
 
     @Test
     public void testStatus() throws Exception {
-	if (log.isDebugEnabled()) {
-	    log.debug("testing hello world");
-	}
-	
 	User usr = mng.createUser("bob");
 	if (log.isDebugEnabled()) {
 	    log.debug("user: " + usr);
@@ -50,10 +47,6 @@ public class UserManagerTest {
 
     @Test
     public void testAuth() throws Exception {
-	if (log.isDebugEnabled()) {
-	    log.debug("testing hello world");
-	}
-
 	User usr = mng.createUser("bob");
 	if (log.isDebugEnabled()) {
 	    log.debug("user: " + usr);
@@ -70,5 +63,16 @@ public class UserManagerTest {
 
 	usr = mng.createUser("goofy");
 	Assert.assertFalse(usr.isAuthorized("pass123"));
+    }
+
+    @Test
+    public void testUserInfo() throws Exception {
+	User usr = mng.createUser("bob");
+	Assert.assertEquals(701, usr.getUserId());
+	Assert.assertEquals("Bob Copymeister", usr.getFullName());
+
+	usr = mng.createUser("jane");
+	Assert.assertEquals(702, usr.getUserId());
+	Assert.assertEquals("Jane Smith", usr.getFullName());
     }
 }

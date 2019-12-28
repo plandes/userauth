@@ -9,6 +9,9 @@
     <logger name="com.zensols.unix.userauth" level="debug" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
+    <logger name="com.zensols.unix.userauth.Command" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
 
     <root level="error">
         <appender-ref ref="CONSOLE"/>
