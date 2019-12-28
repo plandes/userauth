@@ -27,6 +27,13 @@ public class UserManagerTest {
 	Assert.assertTrue(path.getPath().endsWith("ls"));
     }
 
+    @Test(expected = SystemException.class)
+    public void testNotFindExec() throws Exception {
+	Command bin = this.mng.getCommand("NOSUCHCMD");
+	log.debug("found: " + bin);
+	File path = bin.find();
+    }
+
     @Test
     public void testStatus() throws Exception {
 	User usr = mng.createUser("bob");

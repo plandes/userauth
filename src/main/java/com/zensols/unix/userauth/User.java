@@ -40,7 +40,6 @@ public class User {
      * Use the <code>pwauth</code> command to check the password.
      *
      * @param password the password to check with the system
-     * @param pwauthPath the path to the <code>pwauth</code> command
      * @return the status of the command
      * @throws SystemException when executing the binary fails
      */

@@ -1,7 +1,9 @@
 package com.zensols.unix.userauth;
 
 import java.util.Map;
+import java.util.List;
 import java.util.Properties;
+import java.util.Arrays;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -52,21 +54,24 @@ public class UserManager {
      * Override a executableName path.  The default on debian systems is
      * <code>/usr/sbin/paths</code> or <code>/bin/paths</code> on CenotOS.
      *
-     * @param pathsPath the path to the executableName
+     * @param executableName the name of the program (i.e. <code>pwauth</code>)
+     * @param path the value of the path that clobbers
      */
     public void overridePath(String executableName, String path) {
 	getPaths().put(executableName, path);
     }
 
+    /**
+     * Return an executable command.
+     *
+     * @param executableName the name of the program (i.e. <code>pwauth</code>)
+     * @return the command if found, otherwise <code>null</code>
+     */
     public Command getCommand(String executableName) {
 	Command com = this.commands.get(executableName);
 	if (com == null) {
 	    Command which;
 	    String path = getPaths().get(executableName);
-
-	    // if (path == null) {
-	    // 	throw new SystemException("no path defined for: " + executableName);
-	    // }
 
 	    if (executableName.equals(Command.WHICH_NAME)) {
 		which = new Command(executableName, path, null);
@@ -81,8 +86,9 @@ public class UserManager {
     }
 
     /**
-     * @see #overridePath(String, String)
+     * @param executableName the name of the program (i.e. <code>pwauth</code>)
      * @return the path to the executableName
+     * @see #overridePath(String, String)
      */
     public String getPath(String executableName) {
 	return this.paths.get(executableName);
@@ -98,25 +104,44 @@ public class UserManager {
 	return new User(this, userName);
     }
 
-    public static void main(String[] args) throws Exception {
-	User usr = null;
+    private static void usage() {
+	System.err.println("usage: java ... -auth <user> <password> [paths path]");
+	System.err.println("usage: java ... -show <user>");
+	System.exit(1);
+    }
+
+    public static void main(String[] argArr) throws Exception {
 	String password = null;
-	if (args.length == 2) {
-	    UserManager mng = new UserManager();
-	    usr = mng.createUser(args[0]);
-	    password = args[1];
-	} else if (args.length == 3) {
-	    UserManager mng = new UserManager();
-	    //mng.setPathsPath(args[2]);
-	    usr = mng.createUser(args[0]);
-	    password = args[1];
-	} else {
-	    System.err.println("usage: java ... <user> <password> [paths path]");
-	    System.exit(1);
+	List<String> args = new java.util.ArrayList(Arrays.asList(argArr));
+	boolean usage = true;
+
+	if (args.size() > 1) {
+	    if (args.get(0).equals("-auth")) {
+		UserManager mng = new UserManager();
+		User usr = null;
+
+		args.remove(0);
+
+		if (args.size() == 3) {
+		    mng.overridePath("pwauth", args.get(2));
+		}
+		usr = mng.createUser(args.get(0));
+		password = args.get(1);
+		System.out.println(usr.getStatusForPassword(password));
+		usage = false;
+	    } else if (args.get(0).equals("-show")) {
+		args.remove(0);
+		UserManager mng = new UserManager();
+		User usr = mng.createUser(args.get(0));
+		if (args.size() == 2) {
+		    mng.overridePath("getent", args.get(1));
+		}
+		System.out.println("user: " + usr);
+		System.out.println("ID: " + usr.getUserId());
+		System.out.println("name: " + usr.getFullName());
+		usage = false;
+	    }
 	}
-	if (log.isDebugEnabled()) {
-	    log.debug("user: " + usr);
-	}
-	System.out.println(usr.getStatusForPassword(password));
+	if (usage) usage();
     }
 }

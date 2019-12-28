@@ -81,7 +81,9 @@ public class Command {
 	}
 
 	if ((expectReturn != null) && (returnCode != expectReturn)) {
-	    throw new SystemException(String.format("expected return code %d but got %d"));
+	    String msg = String.format("expected return code %d but got %d",
+				       expectReturn, returnCode);
+	    throw new SystemException(msg);
 	}
 
 	return output;
@@ -94,7 +96,7 @@ public class Command {
 	    argList.addAll(Arrays.asList(args.split(" ")));
 	}
 
-	argList.add(0, this.path);
+	argList.add(0, find().getPath());
 
 	if (log.isDebugEnabled()) {
 	    log.debug(String.format("%s: executing %s expecting exit %d", this.name, argList, expectReturn));
@@ -117,13 +119,18 @@ public class Command {
 		if (WHICH_NAME.equals(this.name)) {
 		    throw new SystemException("which executable not found at: " + file);
 		}
-		CommandOutput output = this.which.execute(0, this.name, null);
-		String foundPath = output.stdout.get(0);
-		if (foundPath == null) {
-		    this.exists = Exists.no;
+		CommandOutput output = this.which.execute(null, this.name, null);
+		if (output.returnCode == 1) {
+		    String msg = "could not find executable program: " + this.name;
+		    throw new SystemException(msg);
 		} else {
-		    this.exists = Exists.yes;
-		    file = new File(foundPath);
+		    String foundPath = output.stdout.get(0);
+		    if (foundPath == null) {
+			this.exists = Exists.no;
+		    } else {
+			this.exists = Exists.yes;
+			file = new File(foundPath);
+		    }
 		}
 	    }
 
