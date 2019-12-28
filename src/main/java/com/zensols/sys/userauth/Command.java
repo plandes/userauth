@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.StringWriter;
+import java.io.PrintWriter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +45,13 @@ class Command {
 	String line = null;
 	int returnCode = -1;
 	String output = null;
+
+	if (input != null) {
+	    PrintWriter stdin = new PrintWriter(proc.getOutputStream());
+	    for (String inputLine: input) {
+		stdin.println(inputLine);
+	    }
+	}
 
 	if (log.isDebugEnabled()) {
 	    log.debug("waiting for process to finish");
@@ -99,7 +107,7 @@ class Command {
 		if (WHICH_NAME.equals(this.name)) {
 		    throw new SystemException("which executable not found at: " + file);
 		}
-		String foundPath = this.which.execute(0, this.name);
+		String foundPath = this.which.execute(0, this.name, null);
 		if (foundPath == null) {
 		    this.exists = Exists.no;
 		} else {

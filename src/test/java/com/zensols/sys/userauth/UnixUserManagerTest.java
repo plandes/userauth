@@ -26,7 +26,7 @@ public class UnixUserManagerTest {
 	Assert.assertTrue(path.getPath().endsWith("ls"));
     }
 
-    //@Test
+    @Test
     public void testStatus() throws Exception {
 	if (log.isDebugEnabled()) {
 	    log.debug("testing hello world");
@@ -48,7 +48,7 @@ public class UnixUserManagerTest {
 	Assert.assertEquals(UserAuthStatus.UNKNOWN, status);
     }
 
-    //@Test
+    @Test
     public void testAuth() throws Exception {
 	if (log.isDebugEnabled()) {
 	    log.debug("testing hello world");
