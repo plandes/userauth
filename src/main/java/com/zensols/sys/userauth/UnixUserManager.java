@@ -19,11 +19,4 @@ public class UnixUserManager {
     public UnixUser createUser(String userName) {
 	return new UnixUser(this, userName);
     }
-
-    public static void main(String[] args) throws Exception {
-	if (log.isInfoEnabled()) {
-	    log.info("starting main...");
-	}
-	System.out.println("hello world!");
-    }
 }
