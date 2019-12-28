@@ -46,8 +46,8 @@ Note that you can also build a single jar file with all the dependencies with: `
 
 ## Other Libraries
 
-Jenkins has a [plugin] available.  However, it is tightly coupled their
-framework, for which libraries are difficult to find.
+Jenkins has a [plugin] available, which uses [pwauth].  However, it is tightly
+coupled their framework, for which libraries are difficult to find.
 
 
 ## Changelog
