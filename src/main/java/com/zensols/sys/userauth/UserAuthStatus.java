@@ -3,7 +3,7 @@ package com.zensols.sys.userauth;
 /**
  * Status codes given by <code>pwauth</code>, their return codes, and descriptions.
  *
- * @see https://manpages.debian.org/stretch/pwauth/pwauth.8.en.html
+ * @see <a href="https://manpages.debian.org/stretch/pwauth/pwauth.8.en.html">pwauth</a>
  * @author Paul Landes
  */
 public enum UserAuthStatus {
