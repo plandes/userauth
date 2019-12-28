@@ -2,6 +2,11 @@ package com.zensols.unix.userauth;
 
 import java.util.List;
 
+/**
+ * Output from the command line.
+ *
+ * @author Paul Landes
+ */
 public class CommandOutput {
     public int returnCode;
     public List<String> stdout;

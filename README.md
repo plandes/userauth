@@ -7,8 +7,11 @@ thus, system specific compilation can be avoided.
 Specifically, this provides:
 * User authentication using the [pwauth] binary.
 * User full name and other basic information using the [getent] binary.
+* Can be used for the fairly simple and useful IPC/process API (`Command` class).
 
-Paths of these binaries default to those on Debian systems.
+Paths of these binaries default to those on Debian systems.  However, if the
+path isn't found `which` is used to find it.  You can override the default
+path with `com.zensols.unix.userauth.UserManager.overridePath`.
 
 
 ## Obtaining
@@ -41,7 +44,8 @@ To build from source, do the following:
 - Build the software: `make`
 - Build the distribution binaries: `make dist`
 
-Note that you can also build a single jar file with all the dependencies with: `make package`
+Note that you can also build a single jar file with all the dependencies with:
+`make package`.
 
 
 ## Other Libraries

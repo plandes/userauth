@@ -27,7 +27,7 @@ public class UserManager {
 	commands = new java.util.HashMap();
     }
 
-    public Map<String, String> getPaths() {
+    private Map<String, String> getPaths() {
 	if (this.paths == null) {
 	    Properties props = new Properties();
 	    InputStream in = getClass().getResourceAsStream(PATHS_RES);

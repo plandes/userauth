@@ -13,6 +13,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Represents a command line executable program.  It uses the path given to
+ * find the program, if it doesn't find it, it uses the <code>which</code>
+ * commandn line program.
+ *
+ * @author Paul Landes
+ */
 public class Command {
     private static final Logger log = LoggerFactory.getLogger(Command.class);
 
@@ -26,14 +33,35 @@ public class Command {
     private File absolute;
     private Exists exists;
 
-    public Command(String name, String path, Command which) {
+    /**
+     * @param name the name of the command (i.e. which)
+     * @param path the path of the command
+     * @param which a command created by the manager used to find other
+     * commands if not foiund
+     */
+    Command(String name, String path, Command which) {
 	this.name = name;
 	this.path = path;
 	this.which = which;
 	exists = Exists.maybe;
     }
 
-    protected CommandOutput doExecute(Integer expectReturn, List<String> args, List<String> input)
+    /**
+     * Execute a program.
+     *
+     * @param  expectReturn the integer expected and compared to the returned
+     * code from the command line program
+     * @param args a list of arguments (including the program name) to execute
+     * @param input new line separated string data to feed to the program
+     * through an IPC parent/child pipe if non-null
+     * @return the output from the command
+     * @throws SystemException if <code>expectReturn</code> is non-null and
+     * doesn't match what the program returns
+     * @throws IOException if any IO problems happened during execution via the
+     * IPC pipe
+     */
+    protected CommandOutput doExecute(Integer expectReturn, List<String> args,
+				      List<String> input)
 	throws SystemException, IOException {
 
 	ProcessBuilder pb = new ProcessBuilder(args);
@@ -89,6 +117,19 @@ public class Command {
 	return output;
     }
 
+    /**
+     * Execute a program.
+     *
+     * @param expectReturn the integer expected and compared to the returned
+     * code from the command line program
+     * @param args a space delimited set of arguments passed to the program
+     * @param input new line separated string data to feed to the program
+     * through an IPC parent/child pipe if non-null
+     * @return the output from the command
+     * @throws SystemException if <code>expectReturn</code> is non-null and
+     * doesn't match what the program returns or any IO issues with the IPC
+     * child communication occured
+     */
     public CommandOutput execute(Integer expectReturn, String args, List<String> input) throws SystemException {
 	List<String> argList = new java.util.ArrayList();
 
@@ -109,7 +150,24 @@ public class Command {
 	}
     }
 
-    public File find() {
+    /**
+     * Find the binary executable on the file system.
+     *
+     * @return the absolute path of the binary found on the file system
+     * @throws SystemException if the binary can not be found
+     */
+    public File find() throws SystemException {
+	return find(false);
+    }
+
+    /**
+     * Find the binary executable on the file system.
+     *
+     * @return the absolute path of the binary found on the file system
+     * @param robust if <code>true</code>, return null if the path is not found
+     * @throws SystemException if the binary can not be found
+     */
+    public File find(boolean robust) throws SystemException {
 	File file = null;
 
 	if (this.exists == Exists.maybe) {
@@ -121,8 +179,11 @@ public class Command {
 		}
 		CommandOutput output = this.which.execute(null, this.name, null);
 		if (output.returnCode == 1) {
-		    String msg = "could not find executable program: " + this.name;
-		    throw new SystemException(msg);
+		    if (!robust) {
+			this.exists = Exists.no;
+			String msg = "could not find executable program: " + this.name;
+			throw new SystemException(msg);
+		    }
 		} else {
 		    String foundPath = output.stdout.get(0);
 		    if (foundPath == null) {
@@ -134,12 +195,17 @@ public class Command {
 		}
 	    }
 
-	    file = file.getAbsoluteFile();
+	    if (file != null) {
+		file = file.getAbsoluteFile();
+	    }
 	}
 
 	return file;
     }
 
+    /**
+     * @return whether or not the command exists on the file system.
+     */
     public boolean exists() {
 	find();
 	return this.exists == Exists.yes;
