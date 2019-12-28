@@ -5,7 +5,8 @@
         </encoder>
     </appender>
 
-    <logger name="com.zensols.unix" level="debug" additivity="false">
+    <!--logger name="com.zensols.unix.userauth.UserManagerTest" level="debug" additivity="false"-->
+    <logger name="com.zensols.unix.userauth" level="debug" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

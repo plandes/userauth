@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.commons.io.IOUtils;
 
-class Command {
+public class Command {
     private static final Logger log = LoggerFactory.getLogger(Command.class);
 
     public static final String WHICH_NAME = "which";
@@ -35,7 +35,7 @@ class Command {
 	exists = Exists.maybe;
     }
 
-    protected String doExecute(int expectReturn, List<String> args, List<String> input)
+    protected CommandOutput doExecute(Integer expectReturn, List<String> args, List<String> input)
 	throws SystemException, IOException {
 
 	ProcessBuilder pb = new ProcessBuilder(args);
@@ -44,13 +44,14 @@ class Command {
 	BufferedReader stderr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 	String line = null;
 	int returnCode = -1;
-	String output = null;
+	CommandOutput output = null;
 
 	if (input != null) {
 	    PrintWriter stdin = new PrintWriter(proc.getOutputStream());
 	    for (String inputLine: input) {
 		stdin.println(inputLine);
 	    }
+	    stdin.flush();
 	}
 
 	if (log.isDebugEnabled()) {
@@ -68,21 +69,25 @@ class Command {
 	    log.error(line);
 	}
 	IOUtils.copy(proc.getInputStream(), stdout, "UTF-8");
-	output = stdout.toString().trim();
+	output = new CommandOutput(returnCode, stdout.toString().trim());
 
 	if (log.isDebugEnabled()) {
-	    log.debug(String.format("return code: %d, output: <%s>", returnCode, output));
+	    log.debug(output.toString());
 	}
 
-	if (returnCode != expectReturn) {
+	if ((expectReturn != null) && (returnCode != expectReturn)) {
 	    throw new SystemException(String.format("expected return code %d but got %d"));
 	}
 
 	return output;
     }
 
-    public String execute(int expectReturn, String args, List<String> input) throws SystemException {
-	List<String> argList = new java.util.ArrayList(Arrays.asList(args.split(" ")));
+    public CommandOutput execute(Integer expectReturn, String args, List<String> input) throws SystemException {
+	List<String> argList = new java.util.ArrayList();
+
+	if (args != null) {
+	    argList.addAll(Arrays.asList(args.split(" ")));
+	}
 
 	argList.add(0, this.path);
 
@@ -107,7 +112,8 @@ class Command {
 		if (WHICH_NAME.equals(this.name)) {
 		    throw new SystemException("which executable not found at: " + file);
 		}
-		String foundPath = this.which.execute(0, this.name, null);
+		CommandOutput output = this.which.execute(0, this.name, null);
+		String foundPath = output.stdout;
 		if (foundPath == null) {
 		    this.exists = Exists.no;
 		} else {

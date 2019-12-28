@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,44 +40,16 @@ public class User {
      * @throws IOException when executing the binary fails
      */
     protected UserAuthStatus doPwauth(String password, String pwauthPath) throws IOException {
-	ProcessBuilder pb = new ProcessBuilder(pwauthPath);
-	Process proc = pb.start();
-	PrintWriter stdin = new PrintWriter(proc.getOutputStream());
-	BufferedReader stdout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-	BufferedReader stderr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-	String line = null;
-	int returnCode = -1;
+	Command cmd = owner.getCommand("pwauth");
+	List<String> stdin = new java.util.LinkedList();
+	CommandOutput output = null;
 
-	stdin.println(this.userName);
-	stdin.println(password);
-	stdin.flush();
+	stdin.add(this.userName);
+	stdin.add(password);
 
-	if (log.isDebugEnabled()) {
-	    log.debug("waiting for process to finish");
-	}
-	try {
-	    proc.waitFor();
-	} catch (InterruptedException e) {
-	    throw new RuntimeException("interrupted", e);
-	}
+	output = cmd.execute(null, null, stdin);
 
-	while ((line = stdout.readLine()) != null) {
-	    if (log.isInfoEnabled()) {
-		log.info(String.format("out: %s", line));
-	    }
-	}
-	while ((line = stderr.readLine()) != null) {
-	    if (log.isInfoEnabled()) {
-		log.info(String.format("error: %s", line));
-	    }
-	}
-
-	returnCode = proc.exitValue();
-	if (log.isDebugEnabled()) {
-	    log.debug(String.format("return code: %d", returnCode));
-	}
-
-	return UserAuthStatus.getByCode(returnCode);
+	return UserAuthStatus.getByCode(output.returnCode);
     }
 
     public UserAuthStatus getStatusForPassword(String password) throws IOException {
