@@ -48,7 +48,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.app.compiler.version>1.8</project.app.compiler.version>
-        <project.classname>com.zensols.sys.userauth.UnixUserManager</project.classname>
         <project.site.readme.dir>${basedir}/src/site/markdown</project.site.readme.dir>
         <project.slf4j.version>1.7.26</project.slf4j.version>
         <project.logback.version>1.2.3</project.logback.version>
@@ -241,28 +240,6 @@
                         <phase>site</phase>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>-Dlogback.configurationFile=${basedir}/src/main/resources/logback.xml</argument>
-                        <argument>-classpath</argument>
-                        <classpath/>
-                        <argument>${project.classname}</argument>
-                    </arguments>
-                </configuration>
             </plugin>
         </plugins>
     </build>
