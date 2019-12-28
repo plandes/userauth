@@ -1,4 +1,4 @@
-package com.zensols.sys.userauth;
+package com.zensols.unix.userauth;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,17 +14,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author Paul Landes
  */
-public class UnixUser {
-    private static final Logger log = LoggerFactory.getLogger(UnixUser.class);
+public class User {
+    private static final Logger log = LoggerFactory.getLogger(User.class);
 
-    private UnixUserManager owner;
+    private UserManager owner;
     private String userName;
 
     /**
      * @param owner manager that created it
      * @param userName the name string ID of the user
      */
-    public UnixUser(UnixUserManager owner, String userName) {
+    public User(UserManager owner, String userName) {
 	this.owner = owner;
 	this.userName = userName;
     }

@@ -1,4 +1,4 @@
-package com.zensols.sys.userauth;
+package com.zensols.unix.userauth;
 
 /**
  * Status codes given by <code>pwauth</code>, their return codes, and descriptions.

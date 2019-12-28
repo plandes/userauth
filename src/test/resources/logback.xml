@@ -5,7 +5,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.zensols.sys" level="debug" additivity="false">
+    <logger name="com.zensols.unix" level="debug" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

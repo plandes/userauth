@@ -1,4 +1,4 @@
-package com.zensols.sys.userauth;
+package com.zensols.unix.userauth;
 
 import java.io.File;
 import java.io.IOException;

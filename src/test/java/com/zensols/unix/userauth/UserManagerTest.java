@@ -1,4 +1,4 @@
-package com.zensols.sys.userauth;
+package com.zensols.unix.userauth;
 
 import java.io.File;
 
@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class UnixUserManagerTest {
-    private static final Logger log = LoggerFactory.getLogger(UnixUserManagerTest.class);
-    private static UnixUserManager mng;
+public class UserManagerTest {
+    private static final Logger log = LoggerFactory.getLogger(UserManagerTest.class);
+    private static UserManager mng;
 
-    public UnixUserManagerTest() {
-	this.mng = new UnixUserManager();
+    public UserManagerTest() {
+	this.mng = new UserManager();
 	this.mng.overridePath("pwauth", "src/test/python/pwauth.py");
     }
 
@@ -32,7 +32,7 @@ public class UnixUserManagerTest {
 	    log.debug("testing hello world");
 	}
 	
-	UnixUser usr = mng.createUser("bob");
+	User usr = mng.createUser("bob");
 	if (log.isDebugEnabled()) {
 	    log.debug("user: " + usr);
 	}
@@ -54,7 +54,7 @@ public class UnixUserManagerTest {
 	    log.debug("testing hello world");
 	}
 
-	UnixUser usr = mng.createUser("bob");
+	User usr = mng.createUser("bob");
 	if (log.isDebugEnabled()) {
 	    log.debug("user: " + usr);
 	}

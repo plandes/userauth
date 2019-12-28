@@ -1,4 +1,4 @@
-package com.zensols.sys.userauth;
+package com.zensols.unix.userauth;
 
 import java.util.Map;
 import java.util.Properties;
@@ -11,17 +11,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This creates instances of {@link UnixUser} instances.
+ * This creates instances of {@link User} instances.
  *
  * @author Paul Landes
  */
-public class UnixUserManager {
-    private static final Logger log = LoggerFactory.getLogger(UnixUserManager.class);
+public class UserManager {
+    private static final Logger log = LoggerFactory.getLogger(UserManager.class);
     private static final String PATHS_RES = "/paths.properties";
     private Map<String, String> paths;
     private Map<String, Command> commands;
 
-    public UnixUserManager() {
+    public UserManager() {
 	commands = new java.util.HashMap();
     }
 
@@ -94,19 +94,19 @@ public class UnixUserManager {
      * @param userName the string ID of the user
      * @return the new user
      */
-    public UnixUser createUser(String userName) {
-	return new UnixUser(this, userName);
+    public User createUser(String userName) {
+	return new User(this, userName);
     }
 
     public static void main(String[] args) throws Exception {
-	UnixUser usr = null;
+	User usr = null;
 	String password = null;
 	if (args.length == 2) {
-	    UnixUserManager mng = new UnixUserManager();
+	    UserManager mng = new UserManager();
 	    usr = mng.createUser(args[0]);
 	    password = args[1];
 	} else if (args.length == 3) {
-	    UnixUserManager mng = new UnixUserManager();
+	    UserManager mng = new UserManager();
 	    //mng.setPathsPath(args[2]);
 	    usr = mng.createUser(args[0]);
 	    password = args[1];

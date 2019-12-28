@@ -1,4 +1,4 @@
-package com.zensols.sys.userauth;
+package com.zensols.unix.userauth;
 
 public class SystemException extends RuntimeException {
     public SystemException(String message) {
