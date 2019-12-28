@@ -1,6 +1,14 @@
-# Java User Auth
+# Java Command Line User Authentication
 
-User interface to authenticate and get user information in UNIX/Linux environments.
+This is an interface to authenticate and get user information in UNIX/Linux
+environments.  This just wraps command line utilities and so that JNI, and
+thus, system specific compilation can be avoided.
+
+Specifically, this provides:
+* User authentication using the [pwauth] binary.
+* User full name and other basic information using the [getent] binary.
+
+Paths of these binaries default to those on Debian systems.
 
 
 ## Obtaining
@@ -26,7 +34,7 @@ More [documentation](https://plandes.github.io/userauth/):
 
 ## Building
 
-To build from source, do the folling:
+To build from source, do the following:
 
 - Install [Maven](https://maven.apache.org)
 - Install [GNU make](https://www.gnu.org/software/make/) (optional)
@@ -34,6 +42,12 @@ To build from source, do the folling:
 - Build the distribution binaries: `make dist`
 
 Note that you can also build a single jar file with all the dependencies with: `make package`
+
+
+## Other Libraries
+
+Jenkins has a [plugin] available.  However, it is tightly coupled their
+framework, for which libraries are difficult to find.
 
 
 ## Changelog
@@ -59,3 +73,9 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+<!-- links -->
+[pwauth]: https://github.com/phokz/pwauth
+[getent]: https://en.wikipedia.org/wiki/Getent
+[plugin]: https://github.com/jenkinsci/pwauth-plugin
