@@ -48,7 +48,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.app.compiler.version>1.8</project.app.compiler.version>
-        <project.classname>com.zensols.sys.userauth.HelloWorld</project.classname>
+        <project.classname>com.zensols.sys.userauth.UnixUserManager</project.classname>
         <project.site.readme.dir>${basedir}/src/site/markdown</project.site.readme.dir>
         <project.slf4j.version>1.7.26</project.slf4j.version>
         <project.logback.version>1.2.3</project.logback.version>

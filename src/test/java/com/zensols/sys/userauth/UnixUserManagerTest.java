@@ -8,8 +8,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class HelloWorldTest {
-    private static final Logger log = LoggerFactory.getLogger(HelloWorldTest.class);
+public class UnixUserManagerTest {
+    private static final Logger log = LoggerFactory.getLogger(UnixUserManagerTest.class);
 
     @BeforeClass
     public static void setup() {
@@ -26,11 +26,18 @@ public class HelloWorldTest {
     }
 
     @Test
-    public void testHelloWorld() throws Exception {
+    public void testUnixUserManager() throws Exception {
 	if (log.isDebugEnabled()) {
 	    log.debug("testing hello world");
 	}
 	
-        Assert.assertEquals(1, 1);
+	UnixUserManager mng = new UnixUserManager("src/test/python/pwauth.py");
+	UnixUser usr = mng.createUser("bob");
+	if (log.isDebugEnabled()) {
+	    log.debug("user: " + usr);
+	}
+
+	UserAuthStatus status = usr.getStatusForPassword("wrongpasswd");
+	Assert.assertEquals(UserAuthStatus.INVALID, status);
     }
 }
