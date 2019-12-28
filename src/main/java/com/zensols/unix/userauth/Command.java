@@ -13,8 +13,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.commons.io.IOUtils;
-
 public class Command {
     private static final Logger log = LoggerFactory.getLogger(Command.class);
 
@@ -40,9 +38,10 @@ public class Command {
 
 	ProcessBuilder pb = new ProcessBuilder(args);
 	Process proc = pb.start();
-	StringWriter stdout = new StringWriter();
+	BufferedReader stdout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 	BufferedReader stderr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 	String line = null;
+	List<String> stdoutLines = new java.util.LinkedList();
 	int returnCode = -1;
 	CommandOutput output = null;
 
@@ -68,8 +67,14 @@ public class Command {
 	while ((line = stderr.readLine()) != null) {
 	    log.error(line);
 	}
-	IOUtils.copy(proc.getInputStream(), stdout, "UTF-8");
-	output = new CommandOutput(returnCode, stdout.toString().trim());
+
+	while ((line = stdout.readLine()) != null) {
+	    line = line.trim();
+	    log.info(String.format("%s: output: %s", this.name, line));
+	    stdoutLines.add(line);
+	}
+
+	output = new CommandOutput(returnCode, stdoutLines);
 
 	if (log.isDebugEnabled()) {
 	    log.debug(output.toString());
@@ -113,7 +118,7 @@ public class Command {
 		    throw new SystemException("which executable not found at: " + file);
 		}
 		CommandOutput output = this.which.execute(0, this.name, null);
-		String foundPath = output.stdout;
+		String foundPath = output.stdout.get(0);
 		if (foundPath == null) {
 		    this.exists = Exists.no;
 		} else {

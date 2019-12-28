@@ -1,10 +1,12 @@
 package com.zensols.unix.userauth;
 
+import java.util.List;
+
 public class CommandOutput {
     public int returnCode;
-    public String stdout;
+    public List<String> stdout;
 
-    public CommandOutput(int returnCode, String stdout) {
+    public CommandOutput(int returnCode, List<String> stdout) {
 	this.returnCode = returnCode;
 	this.stdout = stdout;
     }
