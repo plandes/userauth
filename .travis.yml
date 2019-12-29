@@ -6,4 +6,3 @@ jdk:
 before_install:
   - which python3
   - env python3 --version
-  - make testmockpwauth
