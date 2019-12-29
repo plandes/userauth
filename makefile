@@ -32,6 +32,10 @@ package:
 install:
 	mvn -Plogging-deps install
 
+.PHONY:	fatjar
+fatjar:
+	mvn -Pfat-jar compile assembly:single
+
 .PHONY:	site
 site:
 	mvn -Plogging-deps site
@@ -51,3 +55,7 @@ dist:
 .PHONY:	clean
 clean:
 	mvn clean
+
+.PHONY:	deploy
+deploy:
+	mvn clean package deploy
