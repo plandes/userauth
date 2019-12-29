@@ -22,6 +22,8 @@ public class User {
     public static final int DEFAULT_USER_ID_FIELD = 2;
     public static final int DEFAULT_GROUP_ID_FIELD = 3;
     public static final int DEFAULT_FULL_NAME_FIELD = 4;
+    public static final int NO_USER = -1;
+    public static final int NO_GROUP = -1;
 
     private UserManager owner;
     private String userName;
@@ -61,32 +63,53 @@ public class User {
 
     private String[] getGetentFields() throws SystemException {
 	if (this.getentFields == null) {
-	    CommandOutput output = owner.getCommand("getent").execute(0, "passwd " + this.userName, null);
 	    String[] fields = null;
+	    CommandOutput output = owner.getCommand("getent").execute(null, "passwd " + this.userName, null);
 
-	    if (output.stdout.size() != 1) {
-		throw new SystemException(String.format("expected single line output but got: <%s>", output.stdout));
+	    if (output.stdout.size() > 1) {
+		throw new SystemException(String.format("expected 0 or 1 lines output but got: <%s>", output.stdout));
 	    }
-	    this.getentFields = output.stdout.get(0).split(":");
+	    else if (output.stdout.size() > 0) {
+		this.getentFields = output.stdout.get(0).split(":");
+	    } else {
+		this.getentFields = new String[0];
+	    }
 	}
 	return this.getentFields;
     }
 
+    public boolean exists() throws SystemException {
+	return getFullName() != null;
+    }
+
     public int getUserId() throws SystemException {
 	String[] fields = getGetentFields();
-	String idStr = fields[DEFAULT_USER_ID_FIELD];
-	return Integer.parseInt(idStr);
+
+	if (fields.length == 0) {
+	    return NO_USER;
+	} else {
+	    String idStr = fields[DEFAULT_USER_ID_FIELD];
+	    return Integer.parseInt(idStr);
+	}
     }
 
     public int getGroupId() throws SystemException {
 	String[] fields = getGetentFields();
-	String idStr = fields[DEFAULT_GROUP_ID_FIELD];
-	return Integer.parseInt(idStr);
+
+	if (fields.length == 0) {
+	    return NO_GROUP;
+	} else {
+	    String idStr = fields[DEFAULT_GROUP_ID_FIELD];
+	    return Integer.parseInt(idStr);
+	}
     }
 
     public String getFullName() throws SystemException {
 	String[] fields = getGetentFields();
-	return fields[DEFAULT_FULL_NAME_FIELD];
+	if (fields.length > 0) {
+	    return fields[DEFAULT_FULL_NAME_FIELD];
+	}
+	return null;
     }
 
     public String toString() {

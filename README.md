@@ -8,6 +8,7 @@ Specifically, this provides:
 * User authentication using the [pwauth] binary.
 * User full name and other basic information using the [getent] binary.
 * Can be used for the fairly simple and useful IPC/process API (`Command` class).
+* Pure Java implementation.
 
 Paths of these binaries default to those on Debian systems.  However, if the
 path isn't found `which` is used to find it.  You can override the default
@@ -57,7 +58,6 @@ coupled their framework, for which libraries are difficult to find.
 ## Changelog
 
 An extensive changelog is available [here](CHANGELOG.md).
-
 
 
 ## License

@@ -67,7 +67,7 @@ public class UserManager {
      * @param executableName the name of the program (i.e. <code>pwauth</code>)
      * @return the command if found, otherwise <code>null</code>
      */
-    public Command getCommand(String executableName) {
+    public synchronized Command getCommand(String executableName) {
 	Command com = this.commands.get(executableName);
 	if (com == null) {
 	    Command which;

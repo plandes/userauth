@@ -32,6 +32,7 @@ public class Command {
     private Command which;
     private File absolute;
     private Exists exists;
+    private Object findMonitor;
 
     /**
      * @param name the name of the command (i.e. which)
@@ -44,6 +45,7 @@ public class Command {
 	this.path = path;
 	this.which = which;
 	exists = Exists.maybe;
+	findMonitor = new Object();
     }
 
     /**
@@ -170,33 +172,45 @@ public class Command {
     public File find(boolean robust) throws SystemException {
 	File file = null;
 
-	if (this.exists == Exists.maybe) {
-	    file = this.path != null ? new File(this.path) : null;
+	synchronized(this.findMonitor) {
+	    if (this.exists == Exists.maybe) {
+		file = this.path != null ? new File(this.path) : null;
 
-	    if ((file == null) || !file.exists()) {
-		if (WHICH_NAME.equals(this.name)) {
-		    throw new SystemException("which executable not found at: " + file);
+		if ((file == null) || !file.exists()) {
+		    file = find(file, robust);
 		}
-		CommandOutput output = this.which.execute(null, this.name, null);
-		if (output.returnCode == 1) {
-		    if (!robust) {
-			this.exists = Exists.no;
-			String msg = "could not find executable program: " + this.name;
-			throw new SystemException(msg);
-		    }
-		} else {
-		    String foundPath = output.stdout.get(0);
-		    if (foundPath == null) {
-			this.exists = Exists.no;
-		    } else {
-			this.exists = Exists.yes;
-			file = new File(foundPath);
-		    }
+
+		if (file != null) {
+		    file = file.getAbsoluteFile();
 		}
 	    }
+	}
 
-	    if (file != null) {
-		file = file.getAbsoluteFile();
+	return file;
+    }
+
+    private File find(File file, boolean robust) throws SystemException {
+	CommandOutput output = null;
+
+	if (WHICH_NAME.equals(this.name)) {
+	    throw new SystemException("which executable not found at: " + file);
+	}
+
+	output = this.which.execute(null, this.name, null);
+
+	if (output.returnCode == 1) {
+	    if (!robust) {
+		this.exists = Exists.no;
+		String msg = "could not find executable program: " + this.name;
+		throw new SystemException(msg);
+	    }
+	} else {
+	    String foundPath = output.stdout.get(0);
+	    if (foundPath == null) {
+		this.exists = Exists.no;
+	    } else {
+		this.exists = Exists.yes;
+		file = new File(foundPath);
 	    }
 	}
 
@@ -207,7 +221,7 @@ public class Command {
      * @return whether or not the command exists on the file system.
      */
     public boolean exists() {
-	find();
+	find(false);
 	return this.exists == Exists.yes;
     }
 
