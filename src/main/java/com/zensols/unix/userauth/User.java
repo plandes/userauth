@@ -45,7 +45,9 @@ public class User {
      * @return the status of the command
      * @throws SystemException when executing the binary fails
      */
-    public UserAuthStatus getStatusForPassword(String password) throws SystemException {
+    public UserAuthStatus getStatusForPassword(String password)
+	throws SystemException {
+
 	Command cmd = owner.getCommand("pwauth");
 	List<String> stdin = new java.util.LinkedList();
 	CommandOutput output = null;

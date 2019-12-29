@@ -132,7 +132,9 @@ public class Command {
      * doesn't match what the program returns or any IO issues with the IPC
      * child communication occured
      */
-    public CommandOutput execute(Integer expectReturn, String args, List<String> input) throws SystemException {
+    public CommandOutput execute(Integer expectReturn, String args, List<String> input)
+	throws SystemException {
+
 	List<String> argList = new java.util.ArrayList();
 
 	if (args != null) {

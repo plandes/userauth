@@ -1,5 +1,7 @@
-language: java
 dist: trusty
 install: true
+language: java
+python:
+  - "3.6"
 jdk:
   - openjdk8

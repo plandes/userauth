@@ -64,7 +64,6 @@ public class UserManagerTest {
 	    log.debug("user: " + usr);
 	}
 
-	UserAuthStatus status = usr.getStatusForPassword("wrongpasswd");
 	assertFalse(usr.isAuthorized("wrongpasswd"));
 	assertTrue(usr.isAuthorized("pass123"));
 
