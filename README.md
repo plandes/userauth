@@ -1,5 +1,8 @@
 # Java Command Line User Authentication
 
+[![Travis CI Build Status][travis-badge]][travis-link]
+
+
 This is an interface to authenticate and get user information in UNIX/Linux
 environments.  This just wraps command line utilities and so that JNI, and
 thus, system specific compilation can be avoided.
@@ -80,6 +83,9 @@ limitations under the License.
 
 
 <!-- links -->
+[travis-link]: https://travis-ci.org/plandes/userauth
+[travis-badge]: https://travis-ci.org/plandes/userauth.svg?branch=master
+
 [pwauth]: https://github.com/phokz/pwauth
 [getent]: https://en.wikipedia.org/wiki/Getent
 [plugin]: https://github.com/jenkinsci/pwauth-plugin
