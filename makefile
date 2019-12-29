@@ -1,5 +1,7 @@
 # build file for Java User Auth
 
+MOCK_PWAUTH = 	src/test/python/pwauth.py
+
 all:	compile
 
 .PHONY:	compile
@@ -9,6 +11,15 @@ compile:
 .PHONY:	test
 test:
 	mvn -Plogging-deps test
+
+.PHONY:	testmockpwauth
+testmockpwauth:
+	echo "bob\npass123" | $(MOCK_PWAUTH) - --debug
+	$(eval RET := $(shell echo "bob\npass123" | $(MOCK_PWAUTH) ; echo $$?))
+	[ $(RET) == 0 ]
+	$(eval RET := $(shell echo "bob\nWRONG_PASS" | $(MOCK_PWAUTH) ; echo $$?))
+	[ $(RET) == 2 ]
+	@ echo mock pwent success
 
 .PHONY:	package
 package:

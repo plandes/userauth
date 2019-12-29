@@ -1,11 +1,9 @@
 dist: trusty
 install: true
 language: java
-python:
-  - "3.6"
 jdk:
   - openjdk8
 before_install:
-  -  python
   - which python3
   - env python3 --version
+  - make testmockpwauth
