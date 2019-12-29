@@ -12,14 +12,17 @@ compile:
 test:
 	mvn -Plogging-deps test
 
-.PHONY:	testmockpwauth
-testmockpwauth:
+.PHONY:	mockpwauthsanity
+mockpwauthsanity:
 	echo "bob\npass123" | $(MOCK_PWAUTH) - --debug
+
+.PHONY:	testmockpwauth
+testmockpwauth:	mockpwauthsanity
 	$(eval RET := $(shell echo "bob\npass123" | $(MOCK_PWAUTH) ; echo $$?))
 	[ $(RET) == 0 ]
 	$(eval RET := $(shell echo "bob\nWRONG_PASS" | $(MOCK_PWAUTH) ; echo $$?))
 	[ $(RET) == 2 ]
-	@ echo mock pwent success
+	@ echo mock pwauth success
 
 .PHONY:	package
 package:

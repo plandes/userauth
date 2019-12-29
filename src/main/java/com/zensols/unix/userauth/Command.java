@@ -81,6 +81,7 @@ public class Command {
 		stdin.println(inputLine);
 	    }
 	    stdin.flush();
+	    stdin.close();
 	}
 
 	if (log.isDebugEnabled()) {

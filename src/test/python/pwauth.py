@@ -2,13 +2,15 @@
 
 import sys
 import itertools as it
-import fileinput
+#import fileinput
 
 DEBUG = len(sys.argv) > 2 and sys.argv[2] == '--debug'
 USER_DB = {'bob': 'pass123',
            'jane': 'changeit'}
 
-user, passwd = tuple(map(lambda x: x.strip(), it.islice(fileinput.input(), 2)))
+#user, passwd = tuple(map(lambda x: x.strip(), it.islice(fileinput.input(), 2)))
+
+user, passwd = tuple(map(lambda x: x.strip(), it.islice(sys.stdin.readlines(), 2)))
 
 if DEBUG:
     print('user: %(user)s, passwd: %(passwd)s' %
