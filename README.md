@@ -8,7 +8,8 @@ environments.  This just wraps command line utilities and so that JNI, and
 thus, system specific compilation can be avoided.
 
 Specifically, this provides:
-* User authentication using the [pwauth] binary.
+* User authentication using the [pwauth] program, which is commonly available
+  on UNIX/Linux machines as a package.
 * User full name and other basic information using the [getent] binary.
 * Can be used for the fairly simple and useful IPC/process API (`Command` class).
 * Pure Java implementation.
@@ -29,6 +30,18 @@ the
     <artifactId>userauth</artifactId>
     <version>0.0.1</version>
 </dependency>
+```
+
+## Installation
+
+The [pwauth] program is installed on Debian/Ubuntu machines with:
+```bash
+apt-get install pwauth
+```
+
+On Redhat/Fedora/CentOS:
+```bash
+yum install pwauth
 ```
 
 
