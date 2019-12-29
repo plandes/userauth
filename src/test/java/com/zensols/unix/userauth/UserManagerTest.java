@@ -64,15 +64,15 @@ public class UserManagerTest {
 	    log.debug("user: " + usr);
 	}
 
-	assertFalse(usr.isAuthorized("wrongpasswd"));
-	assertTrue(usr.isAuthorized("pass123"));
+	assertFalse("should be wrong pasword", usr.isAuthorized("wrongpasswd"));
+	assertTrue("should match password", usr.isAuthorized("pass123"));
 
 	usr = mng.createUser("jane");
-	assertFalse(usr.isAuthorized("pass123"));
-	assertTrue(usr.isAuthorized("changeit"));
+	assertFalse("should not match password", usr.isAuthorized("pass123"));
+	assertTrue("should match password", usr.isAuthorized("changeit"));
 
 	usr = mng.createUser("goofy");
-	assertFalse(usr.isAuthorized("pass123"));
+	assertFalse("should not match password", usr.isAuthorized("pass123"));
     }
 
     @Test

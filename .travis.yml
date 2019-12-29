@@ -5,3 +5,7 @@ python:
   - "3.6"
 jdk:
   - openjdk8
+before_install:
+  - which python
+  - which python3
+  - python3 --version
