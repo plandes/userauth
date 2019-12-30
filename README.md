@@ -1,7 +1,7 @@
 # Java Command Line User Authentication
 
 [![Travis CI Build Status][travis-badge]][travis-link]
-
+[![Maven Central][maven-badge]][maven-link]
 
 This is an interface to authenticate and get user information in UNIX/Linux
 environments.  This just wraps command line utilities and so that JNI, and
@@ -99,6 +99,10 @@ limitations under the License.
 [travis-link]: https://travis-ci.org/plandes/userauth
 [travis-badge]: https://travis-ci.org/plandes/userauth.svg?branch=master
 
+[maven-link]: https://maven-badges.herokuapp.com/maven-central/com.zensols.sys/userauth
+[maven-badge]: https://maven-badges.herokuapp.com/maven-central/com.zensols.sys/userauth/badge.svg
+
 [pwauth]: https://github.com/phokz/pwauth
 [getent]: https://en.wikipedia.org/wiki/Getent
 [plugin]: https://github.com/jenkinsci/pwauth-plugin
+
